@@ -1,0 +1,8 @@
+venv
+tetrlog/*
+tetrlogs/*
+track/*
+in-game/*
+model/*
+temp.ipynb
+.idea
