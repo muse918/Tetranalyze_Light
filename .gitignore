@@ -6,3 +6,4 @@ in-game/*
 model/*
 temp.ipynb
 .idea
+account.py
