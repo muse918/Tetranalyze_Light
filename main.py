@@ -28,8 +28,8 @@ async def tetranalyze(ctx, nick: discord.Option(str, required=False, description
 
 
 @bot.slash_command(guild_ids=guild, description='플레이어의 Tetra League 정보를 바탕으로 승률을 예측합니다.', name='vs')
-async def vs(ctx, player1: discord.Option(str, required=False, description='플레이어1의 닉네임', name='player1')
-                , player2: discord.Option(str, required=True, description='플레이어2의 닉네임', name='player2')):
+async def vs(ctx, player2: discord.Option(str, required=True, description='플레이어2의 닉네임', name='player2')
+                , player1: discord.Option(str, required=False, description='플레이어1의 닉네임', name='player1')):
     await ctx.defer()
 
     if player1 is None:
@@ -47,8 +47,9 @@ async def vs(ctx, player1: discord.Option(str, required=False, description='플�
             return
         Glicko1 = ML.predictGlicko(userInfo1['apm'], userInfo1['pps'], userInfo1['vs'])
     except:
-        return '플레이어 \"' + row(p1) + '\" 는 Tetra League를 플레이한적이 없습니다.'
-    await ctx.respond()
+        await ctx.respond('플레이어 \"' + row(p1) + '\" 는 Tetra League를 플레이한적이 없습니다.')
+        return
+
 
 
     p2 = player2.lower()
@@ -60,7 +61,8 @@ async def vs(ctx, player1: discord.Option(str, required=False, description='플�
             return
         Glicko2 = ML.predictGlicko(userInfo2['apm'], userInfo2['pps'], userInfo2['vs'])
     except:
-        return '플레이어 \"' + row(p2) + '\" 는 Tetra League를 플레이한적이 없습니다.'
+        await ctx.respond('플레이어 \"' + row(p2) + '\" 는 Tetra League를 플레이한적이 없습니다.')
+        return
 
     wr_glk = 1/(10**((userInfo2['glicko']-userInfo1['glicko'])/400)+1)
     wr_stat = 1/(10**((Glicko2-Glicko1)/400)+1)
@@ -68,7 +70,7 @@ async def vs(ctx, player1: discord.Option(str, required=False, description='플�
     sendStr = f'==========플레이어 {row(p1)}, 플레이어 {row(p2)}간 대결시 플레이어 {row(p1)}의 예상 승률==========\n'
     sendStr += f'Glicko 기반: {wr_glk*100:.2f}%\n'
     sendStr += f'스탯 기반: {wr_stat*100:.2f}%'
-    await ctx.respond()
+    await ctx.respond(sendStr)
 
 
 @bot.slash_command(name="help", description="도움!!")
@@ -171,12 +173,12 @@ async def analyze_record_match_legacy(ctx, apm: discord.Option(float, required=T
 
 
 @bot.slash_command(guild_ids=guild, description='경기 데이터를 분석합니다.', name='analyze_record_match')
-async def analyze_record_match(ctx, apm1: discord.Option(float, required=True, description='분석할 APM(나)', name='apm'),
-                         pps1: discord.Option(float, required=True, description='분석할 PPS(나)', name='pps'),
-                         vs1: discord.Option(float, required=True, description='분석할 VS(나)', name='vs'),
-                         apm2: discord.Option(float, required=True, description='분석할 APM(나)', name='apm'),
-                         pps2: discord.Option(float, required=True, description='분석할 PPS(나)', name='pps'),
-                         vs2: discord.Option(float, required=True, description='분석할 VS(나)', name='vs'),
+async def analyze_record_match(ctx, apm1: discord.Option(float, required=True, description='분석할 APM(나)', name='apm1'),
+                         pps1: discord.Option(float, required=True, description='분석할 PPS(나)', name='pps1'),
+                         vs1: discord.Option(float, required=True, description='분석할 VS(나)', name='vs1'),
+                         apm2: discord.Option(float, required=True, description='분석할 APM(나)', name='apm2'),
+                         pps2: discord.Option(float, required=True, description='분석할 PPS(나)', name='pps2'),
+                         vs2: discord.Option(float, required=True, description='분석할 VS(나)', name='vs2'),
                          time: discord.Option(float, required=True, description='분석할 게임의 길이(초)', name='time')):
     await ctx.defer()
     TR1 = ML_in_game2.predictTR(apm1, pps1, vs1, apm2, pps2, vs2, time)
