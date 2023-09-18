@@ -33,8 +33,8 @@ def tr_to_glicko(tr):
         return -10000
     return 1500-math.sqrt(2500 * (64 * math.pi ** 2 + 147 * math.log(10, math.e) ** 2))/math.pi*math.log10(25000/tr-1)
 
-def predictTR(apm, pps, VS):
-    return glicko_to_tr(predictGlicko(apm, pps, VS))
+def predictTR(apm, pps, VS, time):
+    return glicko_to_tr(predictGlicko(apm, pps, VS, time))
 
 
 def predictGlicko(apm, pps, VS, time):

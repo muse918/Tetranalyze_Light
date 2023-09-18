@@ -51,6 +51,6 @@ with open(f'.{sep}model{sep}ML_low.lr', 'rb') as f:
 with open(f'.{sep}model{sep}ML.lr', 'rb') as f:
     model = pickle.load(f)
 
-print(model.score(data_test[['apm', 'pps', 'vs', 'gpm', 'lpm', 'apl', 'app', 'lpp', 'gpl']], target_test))
-print(model_low.score(data_test[['apm', 'pps', 'app']], target_test))
-print(model_ig.score(data_test, target_test))
+print(model.score(data[['apm', 'pps', 'vs', 'gpm', 'lpm', 'apl', 'app', 'lpp', 'gpl']], target))
+print(model_low.score(data[['apm', 'pps', 'app']], target))
+print(model_ig.score(data, target))

@@ -9,10 +9,10 @@ import util
 
 sep = os.sep
 
-if os.path.isfile(f'.{sep}in-game{sep}igrf.csv'):
-    c = pd.read_csv(f'.{sep}in-game{sep}igrf.csv', index_col=0)
+if os.path.isfile(f'.{sep}in-game{sep}igrf2.csv'):
+    c = pd.read_csv(f'.{sep}in-game{sep}igrf2.csv', index_col=0)
 else:
-    c = pd.DataFrame(columns=['apm', 'pps', 'vs', 'time', 'glicko'])
+    c = pd.DataFrame(columns=['apm1', 'pps1', 'vs1', 'apm2', 'pps2', 'vs2', 'time', 'glicko'])
 try:
     response = requests.get('https://ch.tetr.io/api/users/lists/league/all')
     response = response.json()
@@ -44,7 +44,7 @@ try:
                 except KeyboardInterrupt as e:
                     print(c)
                     print('Stop')
-                    c.loc[:, ~c.columns.str.contains('^Unnamed')].to_csv(f'.{sep}in-game{sep}igrf.csv')
+                    c.loc[:, ~c.columns.str.contains('^Unnamed')].to_csv(f'.{sep}in-game{sep}igrf2.csv')
                     print('saved')
                     print(e)
                 except: pass
@@ -53,17 +53,23 @@ try:
 
             t = list(map(lambda j: j['replays'][0]['frames'] / 60, responseReplay['data']))
             if responseReplay['endcontext'][0]['user']['_id'] == i:
-                apm = responseReplay['endcontext'][0]['points']['secondaryAvgTracking']
-                pps = responseReplay['endcontext'][0]['points']['tertiaryAvgTracking']
-                vs = responseReplay['endcontext'][0]['points']['extraAvgTracking']['aggregatestats___vsscore']
+                apm1 = responseReplay['endcontext'][0]['points']['secondaryAvgTracking']
+                pps1 = responseReplay['endcontext'][0]['points']['tertiaryAvgTracking']
+                vs1 = responseReplay['endcontext'][0]['points']['extraAvgTracking']['aggregatestats___vsscore']
+                apm2 = responseReplay['endcontext'][1]['points']['secondaryAvgTracking']
+                pps2 = responseReplay['endcontext'][1]['points']['tertiaryAvgTracking']
+                vs2 = responseReplay['endcontext'][1]['points']['extraAvgTracking']['aggregatestats___vsscore']
             else:
-                apm = responseReplay['endcontext'][1]['points']['secondaryAvgTracking']
-                pps = responseReplay['endcontext'][1]['points']['tertiaryAvgTracking']
-                vs = responseReplay['endcontext'][1]['points']['extraAvgTracking']['aggregatestats___vsscore']
-            print(list(zip(apm, pps, vs, t, [glk] * len(t))))
-            c = pd.concat([c, pd.DataFrame(list(zip(apm, pps, vs, t, [glk] * len(t))), columns=['apm', 'pps', 'vs', 'time', 'glicko'])])
+                apm1 = responseReplay['endcontext'][1]['points']['secondaryAvgTracking']
+                pps1 = responseReplay['endcontext'][1]['points']['tertiaryAvgTracking']
+                vs1 = responseReplay['endcontext'][1]['points']['extraAvgTracking']['aggregatestats___vsscore']
+                apm2 = responseReplay['endcontext'][0]['points']['secondaryAvgTracking']
+                pps2 = responseReplay['endcontext'][0]['points']['tertiaryAvgTracking']
+                vs2 = responseReplay['endcontext'][0]['points']['extraAvgTracking']['aggregatestats___vsscore']
+            print(list(zip(apm1, pps1, vs1, apm2, pps2, vs2, t, [glk] * len(t))))
+            c = pd.concat([c, pd.DataFrame(list(zip(apm1, pps1, vs1, apm2, pps2, vs2, t, [glk] * len(t))), columns=['apm1', 'pps1', 'vs1', 'apm2', 'pps2', 'vs2', 'time', 'glicko'])])
             if x%50 == 0:
-                c.loc[:, ~c.columns.str.contains('^Unnamed')].to_csv(f'.{sep}in-game{sep}igrf.csv')
+                c.loc[:, ~c.columns.str.contains('^Unnamed')].to_csv(f'.{sep}in-game{sep}igrf2.csv')
                 print('saved')
         except Exception as e:
             # print(c)
@@ -76,6 +82,6 @@ except Exception as e:
 except KeyboardInterrupt as e:
     print(c)
     print('Stop')
-    c.loc[:, ~c.columns.str.contains('^Unnamed')].to_csv(f'.{sep}in-game{sep}igrf.csv')
+    c.loc[:, ~c.columns.str.contains('^Unnamed')].to_csv(f'.{sep}in-game{sep}igrf2.csv')
     print('saved')
     print(e)
